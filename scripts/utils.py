@@ -1,8 +1,9 @@
 import socket, json, random
 import numpy as np
 import random
+import pandas as pd
 from enum import Enum
-#from q_learning import QAgent
+from datetime import date
 from pynput import keyboard as kdb_read
 from pynput.keyboard import Key, Controller
 
@@ -77,27 +78,47 @@ def avaliar(jobj, configs, sense):
         else:
             raise Exception("Valores fora da política estabelecida")
         
-        if sense == False:
-            if idd == "i_gl": idd = "YOU WIN"
-            elif idd == "i_died": idd = "YOU DIED"
+    if sense == False:
+        if idd == "i_gl": idd = "YOU WIN"
+        elif idd == "i_died": idd = "YOU DIED"
               
     return idd
 
-def calc_score_map(around_map, experimento, call):
+def total_call(experimento):
     
-    score_map = [
+    if experimento["diagonal"] == "ON":
+        total = experimento["total_calls"] + experimento["total_calls_diag"]
+    else:
+        total = experimento["total_calls"]
+    return total
+
+def call_msg(i_sense, experimento):
+    
+    if i_sense > experimento["total_calls"]:
+        id = int((i_sense - experimento["total_calls"])/4) + 1
+        msg = experimento["call-diag"][str(i_sense%4)]
+    else:
+        id = int(i_sense/4) + 1
+        msg = experimento["call"][str(i_sense%4)]
+     
+    return msg[:-3] + str(id) + msg[-2:]
+    
+def explore(around_map, experimento, call):
+    
+    print(around_map)
+    
+    explore_map = [
         experimento["scores"][around_map[x]] for x in range(len(around_map)) 
         ]
         
-    if len(score_map) > 4:
-       score_map_lst = np.array_split(score_map, call/4)
-       score_map = score_map[:4]
-       print(score_map, score_map_lst)
-       for i in range(len(score_map_lst)-1):
+    if len(explore_map) > 4:
+       explore_map_lst = np.array_split(explore_map, call/4)
+       explore_map = explore_map[:4]
+       for i in range(len(explore_map_lst)-1):
            for j in range(4):
-               score_map[j] = [score_map[j][0], (score_map[j][1] or score_map_lst[i+1][j][1])]
-               
-    return score_map
+               explore_map[j] = [explore_map[j][0], (explore_map[j][1] or explore_map_lst[i+1][j][1])]
+     
+    return explore_map
 
 
 def diag_moves(experimento, possible_moves_d, possible_moves, memory):
@@ -119,61 +140,27 @@ def diag_moves(experimento, possible_moves_d, possible_moves, memory):
     return memory
     
 
-def agent_action(configs, experimento, around_map, iAct, memory):  
-    
-    print('AROUND: ', around_map)
-    flgPossuiReward = False
-        
-    score_map = calc_score_map(around_map[:experimento["total_calls"]], experimento, experimento["total_calls"])
-   
-    if iAct != None:
-        behind = configs['behind'][str(iAct)]
-        score_map[behind] = 'behind'
-    
-    print('score_map: ', score_map)
-        
-    if experimento["mind"]["goal"] in score_map:
-        possible_moves = [i for i, j in enumerate(score_map) if j == experimento["mind"]["goal"]]
-        flgPossuiReward = True
-    elif experimento["mind"]["ok"]  in score_map:
-        possible_moves = [i for i, j in enumerate(score_map) if j == experimento["mind"]["ok"]]
-    elif "behind"  in score_map:
-        possible_moves = [i for i, j in enumerate(score_map) if j == experimento["mind"]["behind"]]
-        
-    iNext = random.choice(possible_moves)
-        
-    if experimento["diagonal"] == "ON" :
-        score_map_diag = calc_score_map(around_map[experimento["total_calls"]:], experimento, experimento["total_calls_diag"])
-        print('score_map_diag: ', score_map_diag)
-        if (experimento["mind"]["goal"] in score_map_diag) or (memory != None):
-            possible_moves_d = [i for i, j in enumerate(score_map_diag) if j == experimento["mind"]["goal"]]
-            memory = diag_moves(experimento, possible_moves_d, possible_moves, memory)
-   
-    if (flgPossuiReward == False) and (memory != None):
-        if len(memory) > 0:
-            iNext = memory[0]        
-        
-    msg = configs["comando"][str(iNext)]  
-    
-    return msg, iNext, score_map, memory
 
-def log_table(df, env_id, config_id, exp_id, energy, around_map, iAct):
+def log_table(env_id, config_id, exp_id, energy, around_map, iAct):
     
-    df = df.append({
-        'env': env_id,
-        "config": config_id,
-        "exp": exp_id,
-        "energy": energy,
-        "current": around_map[0],
-        "next_state": around_map[1:][iAct],
-        "next_move": iAct
-        }, ignore_index=True)
+    df = pd.DataFrame({
+        'env': [env_id],
+        "config": [config_id],
+        "exp": [exp_id],
+        "energy": [energy],
+        "current": [around_map[0]],
+        "next_state": [around_map[1:][iAct]],
+        "next_move": [iAct]
+        })
     
-    return df
+    #hoje = str(date.today())
+    save_path = f'../results/{env_id}/{config_id}.txt'
+    df.to_csv(save_path, sep = ';', header=None, mode='a')
+    
+    return 0
 
 
     
     
+     
     
-    
-
