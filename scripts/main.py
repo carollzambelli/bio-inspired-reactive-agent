@@ -84,7 +84,7 @@ for config_id in ["exp_agent3-4"]:
             while sttMM == "PENSAR":
                 print(sttMM, ": ", config_id, '-', exp_id)
                 
-                msg, iAct, memory, flgReward = agent.agent_action(around_map, iAct, memory, flgReward)  
+                msg, iAct = agent.agent_action(around_map, iAct, memory)  
                 utils.log_table(env_id, config_id, exp_id, energy, around_map, iAct)
                 energy = energy - 1
                 i_sense = -1
