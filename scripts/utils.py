@@ -14,7 +14,7 @@ def wait_answ(sock):
         try:
             respEnviSim = sock.recv(256)    # recebe até 256 bytes
             jobj = json.loads(respEnviSim)  # converte a string em objeto Json
-            print("R: ", jobj)              # imprime a mensagem recebida  
+            #print("R: ", jobj)              # imprime a mensagem recebida  
             return jobj
         except socket.error as e: 
             raise Exception("Socket error: ", str(e))
@@ -24,7 +24,7 @@ def enviar(msg, sock):
     while msg != 'esc':
         try: 
             sock.sendall(msg.encode('utf-8'))   
-            print ("E: ", msg)                  
+            #print ("E: ", msg)                  
             next_state = "RECEBER"   
             msg = 'esc'                        
         except socket.error as e: 
@@ -103,23 +103,6 @@ def call_msg(i_sense, experimento):
      
     return msg[:-3] + str(id) + msg[-2:]
     
-def explore(around_map, experimento, call):
-    
-    print(around_map)
-    
-    explore_map = [
-        experimento["scores"][around_map[x]] for x in range(len(around_map)) 
-        ]
-        
-    if len(explore_map) > 4:
-       explore_map_lst = np.array_split(explore_map, call/4)
-       explore_map = explore_map[:4]
-       for i in range(len(explore_map_lst)-1):
-           for j in range(4):
-               explore_map[j] = [explore_map[j][0], (explore_map[j][1] or explore_map_lst[i+1][j][1])]
-     
-    return explore_map
-
 
 def diag_moves(experimento, possible_moves_d, possible_moves, memory):
     
@@ -139,8 +122,6 @@ def diag_moves(experimento, possible_moves_d, possible_moves, memory):
 
     return memory
     
-
-
 def log_table(env_id, config_id, exp_id, energy, around_map, iAct):
     
     df = pd.DataFrame({
