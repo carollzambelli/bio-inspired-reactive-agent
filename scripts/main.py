@@ -5,11 +5,7 @@ from pynput import keyboard as kdb_read
 from config import HOST, PORT, env_id, configs
 
 
-#with open('../configs/configs.json') as f1:
-#    configs = json.loads(f1.read())
-    
-#for config_id in configs["agents"]:
-for config_id in ["exp_agent3-4"]:
+for config_id in ["exp_agent3-1"]:
 
     with open('../experimentos/'+config_id+'.json') as f: 
         experimento = json.loads(f.read())
