@@ -1,3 +1,4 @@
+from sympy import E
 import utils 
 import json
 import random
@@ -16,9 +17,8 @@ class Agent:
             2: self.coward_agent,
             3: self.ortogonal_sense_agent
         }
-    
-        return agents_catalog[self.mind['agent']](around_map, iAct)
-
+        return agents_catalog[self.mind['agente']](around_map, iAct)
+        
     def dummy_agent(self, around_map, iAct):
         
         explore_map = [around_map[0]]
@@ -51,27 +51,46 @@ class Agent:
     def ortogonal_sense_agent(self, around_map, iAct):
                                 
         explore_map = around_map[1:]
+        lut = [[0,0,0,0], [0,0,0,0], [0,0,0,0]]
+        print(lut)
          
         if iAct != None:
             behind = self.configs['behind'][str(iAct)]
-            explore_map[behind] = "behind"
-            
-        print(explore_map)
-        final = [0, 0, 0, 0]
-        
-        for i in range(len(explore_map)):
-            call = int(i/4)
-            direction = self.configs['comando_map'][str(i%4)]
-            key = explore_map[i]            
-            final = np.add(self.mind["mind"][str(call)+direction][key], final) 
-            
-        reward = [i for i,v in enumerate(final) if v > 0]
-
-        if len(reward) > 0:
-            max_move = max(final)
-            possible_moves = [i for i,v in enumerate(final) if v == max_move]
         else:
-            possible_moves = [i for i,v in enumerate(final) if v >= 0]
+            behind = 1000000000
+
+        for i in range(len(explore_map)):
+            dist = int(i/4)
+            direction = i%4
+            code = self.mind["sensores"][explore_map[i]]
+            if code == "recuar" and dist != 0 :
+                code = "avançar"
+            linha = self.mind["sensor_map"][code]
+            lut[linha][direction] = (1 or lut[linha][direction])
+            
+        final = []
+            
+        for i in range(4):
+                        
+            a = [lut[0][i], lut[1][i], lut[2][i]]
+            
+            avancar = 1
+            if 1 in lut[1] and 1 not in lut[0]: avancar = 0
+                         
+            b = [[lut[0][i]*-2]*3,[1,1,1],[avancar]*3]
+            
+            print("------------")
+            print(a)
+            print(b)
+            print(np.matmul(a, b))
+            
+            res = [0 if i<=0 else 1 for i in np.matmul(a, b)]
+            print("res=",res)
+            final.append(sum(res)/3)
+        
+        possible_moves = [i for i,v in enumerate(final) if v > 0]
+        print(possible_moves)
+        possible_moves = list(set(possible_moves) - set([behind])) #agenteA->apagar
             
         if len(possible_moves) > 0:
             iNext = random.choice(possible_moves)

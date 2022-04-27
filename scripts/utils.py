@@ -2,10 +2,12 @@ import socket, json, random
 import numpy as np
 import random
 import pandas as pd
+import config
 from enum import Enum
 from datetime import date
 from pynput import keyboard as kdb_read
 from pynput.keyboard import Key, Controller
+
 
 
 def wait_answ(sock):                           
@@ -84,22 +86,14 @@ def avaliar(jobj, configs, sense):
               
     return idd
 
-def total_call(experimento):
-    
-    if experimento["diagonal"] == "ON":
-        total = experimento["total_calls"] + experimento["total_calls_diag"]
-    else:
-        total = experimento["total_calls"]
-    return total
-
 def call_msg(i_sense, experimento):
     
-    if i_sense > experimento["total_calls"]:
-        id = int((i_sense - experimento["total_calls"])/4) + 1
-        msg = experimento["call-diag"][str(i_sense%4)]
+    if i_sense > experimento["dimensao"]:
+        id = int((i_sense - experimento["dimensao"])/4) + 1
+        msg = config.configs["call-diag"][str(i_sense%4)]
     else:
         id = int(i_sense/4) + 1
-        msg = experimento["call"][str(i_sense%4)]
+        msg = config.configs["call"][str(i_sense%4)]
      
     return msg[:-3] + str(id) + msg[-2:]
     

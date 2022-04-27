@@ -5,15 +5,16 @@ from pynput import keyboard as kdb_read
 from config import HOST, PORT, env_id, configs
 from mind import mind
 
-for config_id in ["visao_1a"]:
+for dim in [4,8,12,16]:
         
     agent = Agent(configs, mind) 
         
-    for exp_id in range(100):
+    for exp_id in range(46,100):
         
         sttMM = "INICIAR"
         idd = " "
         energy = configs["energy"][env_id]
+        config_id = "visaoB_"+ str(dim/4)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server_address = (HOST, PORT)
 
@@ -64,7 +65,7 @@ for config_id in ["visao_1a"]:
                 break
                     
             while sttMM == "SENSOR":
-                call = utils.total_call(mind)
+                call = dim
                 msg = utils.call_msg(i_sense, mind)
                 sense = True
                 sttMM = "ENVIAR"
