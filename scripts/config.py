@@ -1,6 +1,6 @@
 HOST = '192.168.0.11'   
 PORT = 15051
-env_id = '10x10'
+env_id = '16x16'
 
 configs = {
     "states":

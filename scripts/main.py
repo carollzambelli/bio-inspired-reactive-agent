@@ -5,11 +5,13 @@ from pynput import keyboard as kdb_read
 from config import HOST, PORT, env_id, configs
 from mind import mind
 
+
+
 for dim in [4,8,12,16]:
         
     agent = Agent(configs, mind) 
         
-    for exp_id in range(46,100):
+    for exp_id in range(100):
         
         sttMM = "INICIAR"
         idd = " "

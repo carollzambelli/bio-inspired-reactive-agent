@@ -68,6 +68,13 @@ class Agent:
             linha = self.mind["sensor_map"][code]
             lut[linha][direction] = (1 or lut[linha][direction])
             
+        # se recuar = 1 e perseguir = 1, mesma direção
+        # desconsiderar o perseguir 
+        
+        for i in range(4):
+            if lut[0][i] == lut[1][i]:
+                lut[1][i] = 0
+            
         final = []
             
         for i in range(4):
@@ -75,22 +82,15 @@ class Agent:
             a = [lut[0][i], lut[1][i], lut[2][i]]
             
             avancar = 1
-            if 1 in lut[1] and 1 not in lut[0]: avancar = 0
+            if 1 in lut[1]: avancar = 0
                          
             b = [[lut[0][i]*-2]*3,[1,1,1],[avancar]*3]
             
-            print("------------")
-            print(a)
-            print(b)
-            print(np.matmul(a, b))
-            
             res = [0 if i<=0 else 1 for i in np.matmul(a, b)]
-            print("res=",res)
             final.append(sum(res)/3)
         
         possible_moves = [i for i,v in enumerate(final) if v > 0]
-        print(possible_moves)
-        possible_moves = list(set(possible_moves) - set([behind])) #agenteA->apagar
+        possible_moves = list(set(possible_moves) - set([behind])) #agenteA->comentar
             
         if len(possible_moves) > 0:
             iNext = random.choice(possible_moves)
@@ -98,9 +98,7 @@ class Agent:
         else:
             iNext = behind
             msg = self.configs["comando"][str(iNext)]    
-            
-        print(final, possible_moves, iNext)
-            
+                        
         return msg, iNext
         
 
