@@ -1,8 +1,10 @@
-from sympy import E
+from sympy import E, expand_log
 import utils 
 import json
 import random
 import numpy as np
+import brian as br
+from config import configs, t_run
 
 class Agent:
     
@@ -68,9 +70,7 @@ class Agent:
             linha = self.mind["sensor_map"][code]
             lut[linha][direction] = (1 or lut[linha][direction])
             
-        # se recuar = 1 e perseguir = 1, mesma direção
-        # desconsiderar o perseguir 
-        
+        # se recuar = 1 e perseguir = 1, mesma direção desconsidera perseguir 
         for i in range(4):
             if lut[0][i] == lut[1][i]:
                 lut[1][i] = 0
@@ -102,7 +102,30 @@ class Agent:
         return msg, iNext
         
 
+    def ortogonal_sense_brianagent(self, around_map, iAct):   
         
+        explore_map = around_map[1:]
+
+        for i in explore_map:
+            stimulus_file = {
+                "@0": [0],
+                "@100": [configs['neuron_num'][i]],
+                "@500": ["end"]
+                }
+            br.escrever_stimulus_json(stimulus_file) 
+
+        br.net.restore()
+        br.atualizar_input()
+        br.net.run(t_run)
+        br.net.store()
+
+        quem_disparou = br.spike_mon_neurons.spike_trains() 
+
+        #Num_disparos_Nr_rotateright = len(quem_disparou.get(Nr_rotateright))      
+        #Num_disparos_Nr_rotateleft = len(quem_disparou.get(Nr_rotateleft))
+        #Num_disparos_Nr_moveforward = len(quem_disparou.get(Nr_moveforward))  
+
+        pass
     
 
 
