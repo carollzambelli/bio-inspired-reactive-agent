@@ -10,8 +10,11 @@ from mind import mind
 #for dim in [4,8,12,16]:
 dim = 4        
 agent = Agent(configs, mind) 
+next_rand = [100, 112]
     
 for exp_id in range(5):
+
+    #rodar a rede pela primeira vez
     
     sttMM = "INICIAR"
     idd = " "
@@ -75,7 +78,7 @@ for exp_id in range(5):
         while sttMM == "PENSAR":
             print(sttMM, ": ", config_id, '-', exp_id)
             print(around_map, iAct)
-            msg, iAct = agent.agent_action(around_map, iAct)  
+            msg, iAct, next_rand = agent.agent_action(around_map, iAct, next_rand)  
             utils.log_table(env_id, config_id, exp_id, energy, around_map, iAct)
             energy = energy - 1
             i_sense = -1

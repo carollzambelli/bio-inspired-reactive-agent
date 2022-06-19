@@ -1,10 +1,12 @@
+import scipy as sp
 from sympy import E, expand_log
 import utils 
 import json
 import random
 import numpy as np
-import brian as br
+from brian2 import * 
 from config import configs, t_run
+import brian
 
 class Agent:
     
@@ -101,31 +103,52 @@ class Agent:
                         
         return msg, iNext
         
-
-    def ortogonal_sense_brianagent(self, around_map, iAct):   
+    def ortogonal_sense_brianagent(self, around_map, iAct, next_rand):   
         
         explore_map = around_map[1:]
+        indices, times = [], []
 
-        for i in explore_map:
-            stimulus_file = {
-                "@0": [0],
-                "@100": [configs['neuron_num'][i]],
-                "@500": ["end"]
-                }
-            br.escrever_stimulus_json(stimulus_file) 
+        for i in range(len(explore_map)):
 
-        br.net.restore()
-        br.atualizar_input()
-        br.net.run(t_run)
-        br.net.store()
+            value = explore_map[i]
+            if (int(i/4) == 0) and value in ['i_cl', 'i_died']:
+                value = "i_vz"
 
-        quem_disparou = br.spike_mon_neurons.spike_trains() 
+            neuron = configs["neuron_interp"][value] + \
+                     configs["direction"][str(iAct)][str(int(i%4))]
 
-        #Num_disparos_Nr_rotateright = len(quem_disparou.get(Nr_rotateright))      
-        #Num_disparos_Nr_rotateleft = len(quem_disparou.get(Nr_rotateleft))
-        #Num_disparos_Nr_moveforward = len(quem_disparou.get(Nr_moveforward))  
+            indices.append(configs['neuron_num'][neuron][0])
 
-        pass
+        indices.append(next_rand[0], next_rand[1])
+        times = array([50]*len(indices))*ms
+        spikes, spike_mon_neurons = brian.run_network(t_run, indices, times)
+
+        if 81 in spikes:
+            iNext = self.configs['behind'][str(iAct)]
+        else:
+            if 74 in spikes:
+                winner, next_rand[1] = brian.random_choose(configs['randomRL'], spike_mon_neurons)
+                val = configs['randomRL'][str(winner)]
+            elif 75 in spikes:
+                winner, next_rand[1] = brian.random_choose(configs['randomLF'], spike_mon_neurons)
+                val = configs['randomLF'][str(winner)]
+            elif 76 in spikes:
+                winner, next_rand[1] = brian.random_choose(configs['randomFR'], spike_mon_neurons)
+                val = configs['randomFR'][str(winner)]
+            elif 78 in spikes:
+                val = "Nr_movefront"
+            elif 79 in spikes:
+                val = "Nr_moveleft"
+            elif 80 in spikes:
+                val = "Nr_moveright"
+            elif 77 in spikes:
+                winner, next_rand[0] = brian.random_choose(configs['randomAll'], spike_mon_neurons)
+                val = configs['randomAll'][str(winner)]
+            iNext = configs["direction"][str(iAct)][val]
+
+        msg = self.configs["comando"][str(iNext)]    
+
+        return msg, iAct, next_rand
     
 
 
