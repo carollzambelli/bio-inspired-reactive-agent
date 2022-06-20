@@ -1,8 +1,8 @@
 from brian2 import * 
 
-HOST = '192.168.0.15'   
+HOST = '172.29.64.1'   
 PORT = 15051
-env_id = '16x16'
+env_id = '8x8'
 t_run = 400*ms
 
 configs = {
@@ -134,18 +134,18 @@ configs = {
         "Nr_moveback":81,
         },
     "neuron_interp":{
-        "i_vz": "Nr_nothing_",
-        "i_b": "Nr_breeze_",
-        "i_f": "Nr_flash_",
-        "i_s": "Nr_stench_",
-        "i_bf": "Nr_breezeflash_",
-        "i_bs": "Nr_breezestench_",
-        "i_bfs": "Nr_breezeflashstench_",
-        "i_fs": "Nr_flashstench_",
-        "i_died": "Nr_danger_",
-        "i_gl": "Nr_goal_",
-        "i_ini": "Nr_initial_",
-        "i_cl": "Nr_obstruction_"
+        "i_vz": "Nr_nothing",
+        "i_b": "Nr_breeze",
+        "i_f": "Nr_flash",
+        "i_s": "Nr_stench",
+        "i_bf": "Nr_breezeflash",
+        "i_bs": "Nr_breezestench",
+        "i_bfs": "Nr_breezeflashstench",
+        "i_fs": "Nr_flashstench",
+        "i_died": "Nr_danger",
+        "i_gl": "Nr_goal",
+        "i_ini": "Nr_initial",
+        "i_cl": "Nr_obstruction"
         },
     "randomAll":{
         "rand":[[100,103,106,109], [101,104,107,110], [102,105,108,111]],
@@ -163,7 +163,7 @@ configs = {
         "111": "Nr_moveright"
         },
     "randomLF":{
-        "rand":[[112,114,116,118] [113,115,117,119]],
+        "rand":[[112,114,116,118], [113,115,117,119]],
         "112": "Nr_moveleft",
         "113": "Nr_movefront",
         "114": "Nr_moveleft",
@@ -174,7 +174,7 @@ configs = {
         "119": "Nr_movefront"
     },
     "randomRL":{
-        "rand":[[112,114,116,118] [113,115,117,119]],
+        "rand":[[112,114,116,118], [113,115,117,119]],
         "112": "Nr_moveright",
         "113": "Nr_moveleft",
         "114": "Nr_moveright",
@@ -185,7 +185,7 @@ configs = {
         "119": "Nr_moveleft"
     },
     "randomFR":{
-        "rand":[[112,114,116,118] [113,115,117,119]],
+        "rand":[[112,114,116,118], [113,115,117,119]],
         "112": "Nr_movefront",
         "113": "Nr_moveright",
         "114": "Nr_movefront",

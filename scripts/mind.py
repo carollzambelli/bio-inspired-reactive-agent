@@ -1,5 +1,5 @@
 mind = {
-    "agente": 3,
+    "agente": 4,
     "dimensao": 16, 
     "diagonal": "OFF",
     "dimensao_diag": 0,

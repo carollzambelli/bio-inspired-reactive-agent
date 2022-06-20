@@ -1,14 +1,15 @@
-import utils 
+import utils as ut
 import socket, json
 from agent import Agent
 from pynput import keyboard as kdb_read
-from config import HOST, PORT, env_id, configs
+from config import HOST, PORT, env_id, configs, t_run
 from mind import mind
-
-
+import brian
+from brian2 import * 
+from topology import topology
 
 #for dim in [4,8,12,16]:
-dim = 4        
+dim = 16        
 agent = Agent(configs, mind) 
 next_rand = [100, 112]
     
@@ -32,7 +33,7 @@ for exp_id in range(5):
         
         while sttMM == "RSPCONN":
             print(sttMM)
-            jobj = utils.wait_answ(sock)                         
+            jobj = ut.wait_answ(sock)                         
             if (('server' in jobj) and (jobj['server'] == 'connected')):
                 sttMM = "RESTART" 
                 break 
@@ -44,23 +45,24 @@ for exp_id in range(5):
             break
         
         while sttMM == "RESETADO":   
-            jobj = utils.wait_answ(sock)   
+            jobj = ut.wait_answ(sock)   
             if (('server' in jobj) and (jobj['server'] == 'restarted')): 
                 around_map = ["i_ini"]
                 i_sense = 0
-                iAct = None
+                #iAct = None
+                iAct = 0
                 memory = None
                 flgReward = False
                 sttMM = "SENSOR"  
                 break
     
         while sttMM == "RECEBER":
-            jobj = utils.wait_answ(sock)    
+            jobj = ut.wait_answ(sock)    
             sttMM = "AVALIAR"                     
             break
         
         while sttMM == "AVALIAR":
-            idd = utils.avaliar(jobj, configs, sense)
+            idd = ut.avaliar(jobj, configs, sense)
             i_sense = i_sense + 1
             around_map.append(idd)
             if i_sense < call:
@@ -71,7 +73,7 @@ for exp_id in range(5):
                 
         while sttMM == "SENSOR":
             call = dim
-            msg = utils.call_msg(i_sense, mind)
+            msg = ut.call_msg(i_sense, mind)
             sense = True
             sttMM = "ENVIAR"
             
@@ -79,7 +81,8 @@ for exp_id in range(5):
             print(sttMM, ": ", config_id, '-', exp_id)
             print(around_map, iAct)
             msg, iAct, next_rand = agent.agent_action(around_map, iAct, next_rand)  
-            utils.log_table(env_id, config_id, exp_id, energy, around_map, iAct)
+
+            ut.log_table(env_id, config_id, exp_id, energy, around_map, iAct)
             energy = energy - 1
             i_sense = -1
             sense = False
@@ -88,7 +91,7 @@ for exp_id in range(5):
             break
 
         while sttMM == "ENVIAR":
-            sttMM = utils.enviar(msg, sock)
+            sttMM = ut.enviar(msg, sock)
             break
             
     kdb_read.Listener.stop
