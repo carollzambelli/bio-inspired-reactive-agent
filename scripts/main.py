@@ -8,14 +8,13 @@ import brian
 from brian2 import * 
 from topology import topology
 
-#for dim in [4,8,12,16]:
 dim = 16        
 agent = Agent(configs, mind) 
 next_rand = [100, 112]
+#iAct = None
+iAct = 0
     
-for exp_id in range(5):
-
-    #rodar a rede pela primeira vez
+for exp_id in range(3):
     
     sttMM = "INICIAR"
     idd = " "
@@ -49,8 +48,6 @@ for exp_id in range(5):
             if (('server' in jobj) and (jobj['server'] == 'restarted')): 
                 around_map = ["i_ini"]
                 i_sense = 0
-                #iAct = None
-                iAct = 0
                 memory = None
                 flgReward = False
                 sttMM = "SENSOR"  
@@ -79,9 +76,8 @@ for exp_id in range(5):
             
         while sttMM == "PENSAR":
             print(sttMM, ": ", config_id, '-', exp_id)
-            print(around_map, iAct)
-            msg, iAct, next_rand = agent.agent_action(around_map, iAct, next_rand)  
-
+            print(around_map)
+            msg, iAct = agent.agent_action(around_map, iAct)  
             ut.log_table(env_id, config_id, exp_id, energy, around_map, iAct)
             energy = energy - 1
             i_sense = -1

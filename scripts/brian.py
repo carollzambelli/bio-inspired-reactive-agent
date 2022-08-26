@@ -2,6 +2,7 @@ from brian2 import *
 from topology import topology
 from config import configs
 import numpy as np 
+import random
 
 def random_choose(rand_nrs, spikemn):
     
@@ -17,17 +18,13 @@ def random_choose(rand_nrs, spikemn):
         next_n.append(max([i for i, x in enumerate(list(spikemn.i)) if x == Nr_win[j]]))
         
     winner = Nr_win[next_n.index(max(next_n))]
-    if winner == max(lst):
-        next_neuron = min(lst)
-    else:
-        next_neuron = winner +1
         
-    return winner, next_neuron
+    return winner
 
 
-def run_network(t_run, indices, times, next_rand):
+def run_network(t_run, indices):
 
-    #start_scope()
+    prefs.codegen.target = "numpy"
     magic_network.schedule = ['start', 'groups', 'synapses', 'thresholds', 'resets', 'end']
     N = len(topology.keys()) 
     vrest = -70.0*mV 
@@ -43,6 +40,10 @@ def run_network(t_run, indices, times, next_rand):
     neurons.v = -80*mV
     neurons.I = 0*pA 
     
+    indices = list(set(indices))
+    times = [50]*len(indices)
+    print(indices)
+
     inp = SpikeGeneratorGroup(N, array(indices), array(times)*ms, when='before_synapses')
     Stimulus = Synapses(inp, neurons, on_pre='v_post += 11*mV')
 
@@ -50,7 +51,6 @@ def run_network(t_run, indices, times, next_rand):
         Stimulus.connect(i=item, j=item)
 
     syn = Synapses(neurons, neurons, 'w : volt', on_pre='v_post += w')
-    print(syn)
     
     for item in range(N): 
         if ("#" + str(item)) in topology:
@@ -75,21 +75,23 @@ def run_network(t_run, indices, times, next_rand):
     net.add(spike_mon_neurons)  
     net.add(spike_mon_input)
     net.run(t_run)
-    #net.store()
     spikes = list(set(spike_mon_neurons.i))
     print(spikes)
     
     if 81 in spikes:
         val = "behind"
     else:
-        if 74 in spikes:
-            winner, next_rand[1] = random_choose(configs['randomRL'], spike_mon_neurons)
+        if 77 in spikes:
+            winner = random_choose(configs['randomAll']["rand"], spike_mon_neurons)
+            val = configs['randomAll'][str(winner)]
+        elif 74 in spikes:
+            winner = random_choose(configs['randomRL']["rand"], spike_mon_neurons)
             val = configs['randomRL'][str(winner)]
         elif 75 in spikes:
-            winner, next_rand[1] = random_choose(configs['randomLF'], spike_mon_neurons)
+            winner = random_choose(configs['randomLF']["rand"], spike_mon_neurons)
             val = configs['randomLF'][str(winner)]
         elif 76 in spikes:
-            winner, next_rand[1] = random_choose(configs['randomFR'], spike_mon_neurons)
+            winner = random_choose(configs['randomFR']["rand"], spike_mon_neurons)
             val = configs['randomFR'][str(winner)]
         elif 78 in spikes:
             val = "Nr_movefront"
@@ -97,9 +99,6 @@ def run_network(t_run, indices, times, next_rand):
             val = "Nr_moveleft"
         elif 80 in spikes:
             val = "Nr_moveright"
-        elif 77 in spikes:
-            winner, next_rand[0] = random_choose(configs['randomAll'], spike_mon_neurons)
-            val = configs['randomAll'][str(winner)]
     
     return val
 

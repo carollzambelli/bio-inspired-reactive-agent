@@ -2,7 +2,7 @@ import scipy as sp
 from sympy import E, expand_log
 import utils 
 import json
-import random
+import random as r
 import numpy as np
 from brian2 import * 
 from config import configs, t_run
@@ -15,7 +15,7 @@ class Agent:
         self.configs = configs
         self.mind = mind
         
-    def agent_action(self, around_map, iAct, next_rand):
+    def agent_action(self, around_map, iAct):
         
         agents_catalog = {
             1: self.dummy_agent,
@@ -23,9 +23,9 @@ class Agent:
             3: self.ortogonal_sense_agent,
             4: self.ortogonal_sense_brianagent
         }
-        return agents_catalog[self.mind['agente']](around_map, iAct, next_rand)
+        return agents_catalog[self.mind['agente']](around_map, iAct)
         
-    def dummy_agent(self, around_map, iAct, next_rand):
+    def dummy_agent(self, around_map, iAct):
         
         explore_map = [around_map[0]]
         final = [0, 0, 0, 0]
@@ -40,7 +40,7 @@ class Agent:
         msg = self.configs["comando"][str(iNext)]  
         return msg, iNext
 
-    def coward_agent(self, around_map, iAct, next_rand):
+    def coward_agent(self, around_map, iAct):
         
         if iAct != None:
             behind = self.configs['behind'][str(iAct)]
@@ -54,7 +54,7 @@ class Agent:
         
         return msg, iNext, None
     
-    def ortogonal_sense_agent(self, around_map, iAct, next_rand):
+    def ortogonal_sense_agent(self, around_map, iAct):
                                 
         explore_map = around_map[1:]
         lut = [[0,0,0,0], [0,0,0,0], [0,0,0,0]]
@@ -105,41 +105,51 @@ class Agent:
                         
         return msg, iNext
         
-    def ortogonal_sense_brianagent(self, around_map, iAct, next_rand):   
+    def ortogonal_sense_brianagent(self, around_map, iAct):   
         
         explore_map = around_map[1:]
-        indices, times = [0], [50]
+        indices = [0]
 
+        count_f, count_r, count_l = 0,0,0
         for i in range(len(explore_map)):
 
             value = explore_map[i]
-            if (int(i/4) == 0) and value in ['i_cl', 'i_died']:
+            if (int(i/4) != 0) and value in ['i_cl', 'i_died']:
                 value = "i_vz"
 
             neuron = configs["neuron_interp"][value] + \
                      configs["direction"][str(iAct)][int(i%4)]
-
-            indices.append(configs['neuron_num'][neuron])
-
-        indices.append(next_rand[0])
-        indices.append(next_rand[1])
-        times = [50]*len(indices)
-
-        print(indices, times)
+            
+            neuron_n = configs['neuron_num'][neuron]
+            
+            if neuron_n in [23,25,27,28,31]:
+                count_f +=  1
+                if count_f > 1: neuron_n = 21
+            elif neuron_n in [35,37,39,40,43]:
+                count_l +=  1
+                if count_l > 1: neuron_n = 33
+            elif neuron_n in [55,47,49,51,52]:
+                count_r +=  1
+                if count_r > 1: neuron_n = 45
+                
+            indices.append(neuron_n)
+            
+        next_rand = [r.randint(100, 111), r.randint(112, 119)]
+        for i in range(len(next_rand)):
+            indices.append(next_rand[i])
 
         print("iniciando rede brian")
-        val = brian.run_network(t_run, indices.sort(), times, next_rand)
+        val = brian.run_network(t_run, indices)
         
         if val == "behind":
             iNext = self.configs['behind'][str(iAct)]
         else:
             iNext = configs["direction"][str(iAct)][val]
 
-        print(val, iNext)
+        print(val, iNext, iAct)
         msg = self.configs["comando"][str(iNext)]    
 
-        return msg, iAct, next_rand
-        #return indices, times
+        return msg, iNext
 
 
     

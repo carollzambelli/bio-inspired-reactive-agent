@@ -1,8 +1,8 @@
 from brian2 import * 
 
-HOST = '172.29.64.1'   
+HOST = '172.17.112.1'   
 PORT = 15051
-env_id = '8x8'
+env_id = '16x16'
 t_run = 400*ms
 
 configs = {
@@ -40,14 +40,40 @@ configs = {
         "3": 1
     },
     "direction":{
-        "0": {0:"_f",1:"_r",3:"_l",2:"_b",
-             "Nr_movefront":0, "Nr_moveright":1, "Nr_moveleft":3},
-        "1": {1:"_f",2:"_r",0:"_l",3:"_b",
-             "Nr_movefront":1, "Nr_moveright":2, "Nr_moveleft":0},
-        "2": {2:"_f",3:"_r",1:"_l",0:"_b",
-             "Nr_movefront":2, "Nr_moveright":3, "Nr_moveleft":1},
-        "3": {3:"_f",0:"_r",2:"_l",1:"_b",
-             "Nr_movefront":3, "Nr_moveright":0, "Nr_moveleft":2}
+        "0": {
+            0:"_f",
+            1:"_r",
+            3:"_l",
+            2:"_b",
+            "Nr_movefront":0,
+            "Nr_moveright":1,
+            "Nr_moveleft":3},
+        "1": {
+            1:"_f",
+            2:"_r",
+            0:"_l",
+            3:"_b",
+            "Nr_movefront":1,
+            "Nr_moveright":2,
+            "Nr_moveleft":0
+            },
+        "2": {
+            2:"_f",
+            1:"_r",
+            3:"_l",
+            0:"_b",
+            "Nr_movefront":2,
+            "Nr_moveright":1,
+            "Nr_moveleft":3},
+        "3": {
+            3:"_f",
+            0:"_r",
+            2:"_l",
+            1:"_b",
+            "Nr_movefront":3,
+            "Nr_moveright":0,
+            "Nr_moveleft":2
+            }
     },
     "comando":{
         "0": "{\"move\":[\"n\",1]}",
@@ -131,7 +157,7 @@ configs = {
         "Nr_movefront":78,
         "Nr_moveleft":79,
         "Nr_moveright":80,
-        "Nr_moveback":81,
+        "Nr_moveback":81
         },
     "neuron_interp":{
         "i_vz": "Nr_nothing",
