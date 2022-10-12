@@ -1,8 +1,8 @@
 from brian2 import * 
 
-HOST = '172.17.112.1'   
+HOST = '172.26.48.1'   
 PORT = 15051
-env_id = '16x16'
+env_id = '8x8'
 t_run = 400*ms
 
 configs = {

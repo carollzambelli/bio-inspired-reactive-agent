@@ -8,9 +8,9 @@ import brian
 from brian2 import * 
 from topology import topology
 
-dim = 16        
+dim = 16 #está em mind   
 agent = Agent(configs, mind) 
-next_rand = [100, 112]
+#next_rand = [100, 112]
 #iAct = None
 iAct = 0
     
