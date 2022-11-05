@@ -86,10 +86,10 @@ def avaliar(jobj, configs, sense):
               
     return idd
 
-def call_msg(i_sense, experimento):
+def call_msg(i_sense, grid_reach):
     
-    if i_sense > experimento["dimensao"]:
-        id = int((i_sense - experimento["dimensao"])/4) + 1
+    if i_sense > grid_reach:
+        id = int((i_sense - grid_reach)/4) + 1
         msg = config.configs["call-diag"][str(i_sense%4)]
     else:
         id = int(i_sense/4) + 1
@@ -116,13 +116,21 @@ def diag_moves(experimento, possible_moves_d, possible_moves, memory):
 
     return memory
     
-def log_table(env_id, config_id, exp_id, energy, around_map, iAct):
+def log_table(env_id, config_id, exp_id, energy, around_map, iAct, X):
     
     df = pd.DataFrame({
         'env': [env_id],
         "config": [config_id],
         "exp": [exp_id],
         "energy": [energy],
+        "died_1": X['i_died'][1] + X['i_cl'][1],
+        "died_2": X['i_died'][2] + X['i_cl'][2],
+        "died_3": X['i_died'][3] + X['i_cl'][3],
+        "died_4": X['i_died'][4] + X['i_cl'][4],
+        "perseguir_1": X['i_gl'][1] + X['i_bf'][1] + X['i_fs'][1] + X['i_f'][1],
+        "perseguir_2": X['i_gl'][2] + X['i_bf'][2] + X['i_fs'][2] + X['i_f'][2],
+        "perseguir_3": X['i_gl'][3] + X['i_bf'][3] + X['i_fs'][3] + X['i_f'][3],
+        "perseguir_4": X['i_gl'][4] + X['i_bf'][4] + X['i_fs'][4] + X['i_f'][4],
         "current": [around_map[0]],
         "next_state": [around_map[1:][iAct]],
         "next_move": [iAct]

@@ -1,5 +1,0 @@
-0;8x8;visaoB_4.0;0;65;i_ini;i_vz;3
-0;8x8;visaoB_4.0;0;64;i_vz;i_vz;0
-0;8x8;visaoB_4.0;0;63;i_vz;i_vz;0
-0;8x8;visaoB_4.0;0;62;i_vz;i_vz;1
-0;8x8;visaoB_4.0;0;61;i_vz;i_vz;2

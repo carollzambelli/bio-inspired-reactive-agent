@@ -1,8 +1,12 @@
 from brian2 import * 
 
-HOST = '172.26.48.1'   
+HOST = '172.23.224.1'   
 PORT = 15051
-env_id = '8x8'
+env_id = '16x16'
+grid_reach = 4
+agent = 4
+flag_b = True
+iAct =  0 #=100 para os ortogonais
 t_run = 400*ms
 
 configs = {
@@ -32,6 +36,20 @@ configs = {
             },
             "3": "i_bfs"
         }
+    },
+       "sensores":{
+        "i_ini" : [0, 0, 0, 0, 0],
+        "i_vz"  : [0, 0, 0, 0, 0],
+        "i_bfs" : [0, 0, 0, 0, 0],
+        "i_b"   : [0, 0, 0, 0, 0],
+        "i_s"   : [0, 0, 0, 0, 0],
+        "i_bs"  : [0, 0, 0, 0, 0],
+        "i_gl"  : [0, 0, 0, 0, 0],
+        "i_bf"  : [0, 0, 0, 0, 0],
+        "i_fs"  : [0, 0, 0, 0, 0],  
+        "i_f"   : [0, 0, 0, 0, 0],
+        "i_cl"  : [0, 0, 0, 0, 0],
+        "i_died": [0, 0, 0, 0, 0]
     },
     "behind":{
         "0": 2,
