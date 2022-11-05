@@ -1,7 +1,3 @@
-import scipy as sp
-from sympy import E, expand_log
-import utils 
-import json
 import random as r
 import numpy as np
 from brian2 import * 
@@ -74,7 +70,6 @@ class Agent:
             linha = self.mind["sensor_map"][code]
             lut[linha][direction] = (1 or lut[linha][direction])
             
-        # se recuar = 1 e perseguir = 1, mesma direção desconsidera perseguir 
         for i in range(4):
             if lut[0][i] == lut[1][i]:
                 lut[1][i] = 0
@@ -122,6 +117,7 @@ class Agent:
             
             neuron_n = configs['neuron_num'][neuron]
             
+            # ajustes de atraso de rede  
             if neuron_n in [23,25,27,28,31]:
                 count_f +=  1
                 if count_f > 1: neuron_n = 21

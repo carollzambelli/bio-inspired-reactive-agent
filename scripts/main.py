@@ -2,16 +2,11 @@ import utils as ut
 import socket, json
 from agent import Agent
 from pynput import keyboard as kdb_read
-from config import HOST, PORT, env_id, configs, t_run
+from config import HOST, PORT, env_id, configs, dim
 from mind import mind
-import brian
 from brian2 import * 
-from topology import topology
 
-dim = 16 #está em mind   
 agent = Agent(configs, mind) 
-#next_rand = [100, 112]
-#iAct = None
 iAct = 0
     
 for exp_id in range(3):
