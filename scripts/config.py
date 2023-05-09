@@ -1,8 +1,8 @@
 from brian2 import * 
 
-HOST = '172.23.224.1'   
+HOST = '192.168.15.3'   
 PORT = 15051
-env_id = '16x16'
+env_id = '8x8'
 grid_reach = 4
 agent = 4
 flag_b = True
