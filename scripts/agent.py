@@ -88,10 +88,10 @@ class Agent:
             keys = [k for k,v in moves.items() if v == 0 ]
             values = [v for k,v in moves.items() if v == 0]
             #Remove, if its possible, the back movement
-            if len(keys) > 0 and "back" in keys:
-                id = keys.index("back")
-                keys.remove("back")
-                values.remove(values[id])
+            #if len(keys) > 0 and "back" in keys:
+            #    id = keys.index("back")
+            #    keys.remove("back")
+            #    values.remove(values[id])
             p = [1/len(values)]*len(values)
             values = np.array(values) + np.array(p)
 
