@@ -116,3 +116,6 @@ class Agent:
         msg = self.configs["comando"][str(iActn)]
         print(msg, iActn, orientation, i)
         return msg, iActn
+    
+
+    #Denifir políticas em cima deste agente
